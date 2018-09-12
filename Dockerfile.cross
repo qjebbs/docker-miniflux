@@ -1,0 +1,18 @@
+FROM golang:1.11-alpine3.8 as build
+ENV GO111MODULE=on
+RUN apk add --no-cache --update build-base git && \
+    mkdir -p /go/src/github.com/miniflux/ && \
+    cd /go/src/github.com/miniflux/ && \
+    git clone https://github.com/miniflux/miniflux.git miniflux && \
+    cd miniflux && \
+    git checkout __MINIFLUX_VERSION__ && \
+    make clean && \
+    make linux linux-arm VERSION=__MINIFLUX_VERSION__ 
+
+FROM __BASEIMAGE_ARCH__/alpine:3.8
+EXPOSE 80 8080 443
+ENV LISTEN_ADDR 0.0.0.0:8080
+RUN apk --no-cache add ca-certificates tzdata
+COPY --from=build /go/src/github.com/miniflux/miniflux/miniflux-linux-__MINIFLUX_ARCH__ /usr/local/bin/miniflux
+USER nobody
+CMD ["/usr/local/bin/miniflux"]
