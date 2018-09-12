@@ -5,6 +5,8 @@ image:
 
 push:
 	@ docker push miniflux/miniflux:${version}
+	@ docker tag miniflux/miniflux:${version} miniflux/miniflux:latest
+	@ docker push miniflux/miniflux:latest
 
 all:
 	image push
