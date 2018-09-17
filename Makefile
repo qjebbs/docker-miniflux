@@ -1,6 +1,10 @@
-.PHONY: image push all
+.PHONY: clean image push all
+image=miniflux/miniflux
 ARCHS=amd64 arm32v6 arm64v8
 VERSIONS=$(version) latest
+
+clean:
+	@$(foreach arch,$(ARCHS),docker image rm -f $(image):$(arch)-${version} $(image):$(arch)-latest ;)
 
 image:
 	@{ \
@@ -18,15 +22,15 @@ image:
 	done ;\
 	}
 
-	@$(foreach arch,$(ARCHS),docker build -q -f Dockerfile.$(arch) -t miniflux/miniflux:$(arch)-$(version) . ;)
-	@$(foreach arch,$(ARCHS),docker tag miniflux/miniflux:$(arch)-${version} miniflux/miniflux:$(arch)-latest ;)
+	@$(foreach arch,$(ARCHS),docker build -q -f Dockerfile.$(arch) -t $(image):$(arch)-$(version) . ;)
+	@$(foreach arch,$(ARCHS),docker tag $(image):$(arch)-${version} $(image):$(arch)-latest ;)
 
 push:
-	@$(foreach ver,$(VERSIONS),$(foreach arch,$(ARCHS),docker push miniflux/miniflux:$(arch)-$(ver);))
-	@$(foreach ver,$(VERSIONS),docker manifest create miniflux/miniflux:$(ver) miniflux/miniflux:amd64-$(ver) miniflux/miniflux:arm32v6-$(ver) miniflux/miniflux:arm64v8-$(ver);)
-	@$(foreach ver,$(VERSIONS),docker manifest annotate miniflux/miniflux:$(ver) miniflux/miniflux:arm32v6-$(ver) --os linux --arch arm;)
-	@$(foreach ver,$(VERSIONS),docker manifest annotate miniflux/miniflux:$(ver) miniflux/miniflux:arm64v8-$(ver) --os linux --arch arm64 --variant armv8;)
-	@$(foreach ver,$(VERSIONS),docker manifest push --purge miniflux/miniflux:$(ver);)
+	@$(foreach ver,$(VERSIONS),$(foreach arch,$(ARCHS),docker push $(image):$(arch)-$(ver);))
+	@$(foreach ver,$(VERSIONS),docker manifest create $(image):$(ver) $(image):amd64-$(ver) $(image):arm32v6-$(ver) $(image):arm64v8-$(ver);)
+	@$(foreach ver,$(VERSIONS),docker manifest annotate $(image):$(ver) $(image):arm32v6-$(ver) --os linux --arch arm;)
+	@$(foreach ver,$(VERSIONS),docker manifest annotate $(image):$(ver) $(image):arm64v8-$(ver) --os linux --arch arm64 --variant armv8;)
+	@$(foreach ver,$(VERSIONS),docker manifest push --purge $(image):$(ver);)
 
 all:
-	image push
+	clean image push
