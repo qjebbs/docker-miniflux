@@ -1,4 +1,3 @@
-miniflux*
 Dockerfile.amd64
 Dockerfile.arm32v6
 Dockerfile.arm64v8
