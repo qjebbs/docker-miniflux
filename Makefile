@@ -16,9 +16,9 @@ image:
 		arm64v8 ) miniflux_arch="armv8";; \
 	  esac ;\
 	  cp Dockerfile.template Dockerfile.$${arch} ;\
-	  sed -i "" "s|__BASEIMAGE_ARCH__|$${arch}|g" Dockerfile.$${arch} ;\
-	  sed -i "" "s|__MINIFLUX_VERSION__|$${version}|g" Dockerfile.$${arch} ;\
-	  sed -i "" "s|__MINIFLUX_ARCH__|$${miniflux_arch}|g" Dockerfile.$${arch} ;\
+	  sed -i"" -e "s|__BASEIMAGE_ARCH__|$${arch}|g" Dockerfile.$${arch} ;\
+	  sed -i"" -e "s|__MINIFLUX_VERSION__|$${version}|g" Dockerfile.$${arch} ;\
+	  sed -i"" -e "s|__MINIFLUX_ARCH__|$${miniflux_arch}|g" Dockerfile.$${arch} ;\
 	done ;\
 	}
 
