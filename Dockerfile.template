@@ -1,6 +1,6 @@
 FROM golang:1.11-alpine3.8 as build
 ENV GO111MODULE=on
-ARG repo=https://github.com/miniflux/miniflux.git
+ARG repo=https://github.com/qjebbs/miniflux.git
 WORKDIR /go/src
 RUN apk add --no-cache --update build-base git && \
     git clone $repo miniflux && \
