@@ -1,6 +1,6 @@
 .PHONY: clean image push all
 image=miniflux
-ARCHS=amd64 arm32v6 arm64v8
+ARCHS=amd64
 VERSIONS=$(version) latest
 
 clean:
